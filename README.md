@@ -1,6 +1,6 @@
 # PHP Prepended files
 
-Dans **PHP**, il est possible d'automatiser l'intégration systématique de fichier php avant l'exécution et après l'exécution d'un script PHP. Ce sont respectivement les deux directives internes **auto_prepend_file** et **auto_append_file** qui permettent cette automatisation.
+Dans **PHP**, il est possible d'automatiser l'intégration systématique de fichiers avant l'exécution et après l'exécution d'un script PHP. Ce sont respectivement les deux directives internes **auto_prepend_file** et **auto_append_file** qui permettent cette automatisation.
 
 > Ces deux directives sont disponibles quelle que soit la version de PHP.
 
@@ -49,7 +49,7 @@ sudo nano /etc/php5/fpm/php.ini
 
 Cherchez la directive de configuration ``auto_prepend_file`` à l'aide de la combinaison de touches suivantes : `CTRL + W` puis tapez `auto_prepend_file`.
 
-* Si la ligne commence par un **point-virgule** (`;`, supprimez-le (ligne commentée).
+* Si la ligne commence par un **point-virgule** (`;`), supprimez-le (ligne commentée).
 * Inscrivez le nom du script ``auto_prepend_files.php`` derrière le signe `=`.
 
 Vous devriez avoir quelque chose comme ceci :
@@ -153,7 +153,7 @@ Pour créer une règle d'exclusion, il faut créer un bloc muni d'une condition 
 
 ### 2.4. Les conditions
 
-Le système de condition porte sur les données disponibles dans la variable super-globale ``$_SERVER`` disponible sous **Apache** (SAPI **apache**) et **NGINX** (SAPI **FPM-FastCGI**) et en ligne de commande (SAPI **CLI**).
+Le système de condition porte sur les données disponibles dans la variable super-globale ``$_SERVER`` disponible sous **Apache** (SAPI **apache**), **NGINX** (SAPI **FPM-FastCGI**) et en ligne de commande (SAPI **CLI**).
 
 > SAPI : Serveur Application Programming Interface.
 
@@ -163,12 +163,12 @@ Dans la formule suivante : ``condition_src condition_value``, ``condition_src`` 
 ### 2.5. Expressions Réguliéres
 
 L'ensemble des valeurs saisies, qu'il s'agisse d'une valeur de condition, d'un nom de fichier ou dossier à exclure, celles-ci sont traitées en tant que valeur exacte.
-Il est possible de rendre ces valeurs plus souples en utilisant les expressions régulières. Pour transformer une valeur exacte en expression régulière, il suffit de la précéder à l'aide du caractère tilde ``~``.
+Il est possible de rendre ces valeurs plus souples en utilisant les expressions régulières. Pour transformer une valeur exacte en expression régulière, il suffit de la précéder à l'aide du caractère **tilde** ``~``.
 
 
 ## Annexe 1 - Server keys
 
-Ci-dessous, la liste compléte des clés admise pour définir une condition.
+Ci-dessous, la liste complète des clés admises pour définir une condition.
 
 > La disponibilité des clés pour Apache n'ont pas été évaluées.
 
@@ -286,17 +286,4 @@ Ci-dessous, la liste compléte des clés admise pour définir une condition.
 +--------------------------------+-------+-------+-------+-------------------------------------------
 |                           argc |       |       |   X   | 1
 +--------------------------------+-------+-------+-------+-------------------------------------------
-`
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
