@@ -6,7 +6,7 @@
  *
  * @author    Nicolas DUPRE
  * @release   22/09/2017
- * @version   1.0.0
+ * @version   1.1.0
  * @package   Prepend
  */
 
@@ -21,9 +21,9 @@ function fix_FILES ($smart = true)
     static $already_fixed = false;
 
     if (!$already_fixed) {
-        /** Parcourir toutes les éventuelles clé de fichier présente dans $_FILES */
-        foreach ($_FILES as $name => &$data) {
-            /** Si le mode smart est activé, ne pas traier les entrée n'ayant qu'un seul fichier */
+        /** Parcourir toutes les éventuelles clés de fichier présentes dans $_FILES */
+        foreach ($_FILES as &$data) {
+            /** Si le mode smart est activé, ne pas traier les entrées n'ayant qu'un seul fichier */
             if($smart && !is_array($data['name'])) continue;
 
             /** Regroupement par index */
