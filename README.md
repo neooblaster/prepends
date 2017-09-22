@@ -54,7 +54,7 @@ Cherchez la directive de configuration ``auto_prepend_file`` à l'aide de la com
 
 Vous devriez avoir quelque chose comme ceci :
 
-```bash
+```
 ; Automatically add files before PHP document.
 ; http://php.net/auto-prepend-file
 auto_prepend_file = auto_prepend_files.php
@@ -70,7 +70,7 @@ De nouveau dans l'éditeur nano, faites ``CTRL + W`` et tapez `include_path`.
 
 Vous devriez avoir quelque chose comme ceci :
 
-```bash
+```
 ; UNIX : "/path1:/path2
 include_path = ".:/usr/share/php:/var/www/Prepends"
 ```
@@ -80,6 +80,8 @@ La configuration étant désormais terminée, il ne reste plus qu'à redémarrer
 ```bash
 sudo service php5-fpm restart
 ```
+
+**Important** : La configuration sera effective uniquement pour le **SAPI** ``fpm-fcgi``. Si vous souhaitez utilisez les mêmes ressources **prepended** en ``CLI``, il faudra effectuer les mêmes opérations dans le fichier ``php.ini`` dédié à l'emplacement suivant : ``/etc/php5/cli/``.
 
 
 ## 2. Configuration de ``auto_prepend_files.php`` :
@@ -176,7 +178,7 @@ Ci-dessous, la liste complète des clés admises pour définir une condition.
                                  +-----------------------+
                                  |          SAPI         |
 +--------------------------------+-------+-------+-------+-------------------------------------------
-|           NAME OF KEY          | APACH | NGINX | SHELL | DESCRIPTION (Value sample)
+|           NAME OF KEY          | APACH | NGINX |  CLI  | DESCRIPTION (Value sample)
 +--------------------------------+-------+-------+-------+-------------------------------------------
 |                           USER |       |   X   |   X   | www-data
 +--------------------------------+-------+-------+-------+-------------------------------------------

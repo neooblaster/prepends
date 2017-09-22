@@ -14,6 +14,7 @@ FILES {
 
 # 2. Global Folder Exclusion - For All PHP Scripts
 FOLDERS {
+    tests
 }
 
 
@@ -99,7 +100,7 @@ SERVER_KEY_IN_UPPER_CASE your_value_or_regexp_with_tilde {
 #                                   +-----------------------+
 #                                   |          SAPI         |
 #  +--------------------------------+-------+-------+-------+-------------------------------------------
-#  |           NAME OF KEY          | APACH | NGINX | SHELL | DESCRIPTION (Value sample)
+#  |           NAME OF KEY          | APACH | NGINX |  CLI  | DESCRIPTION (Value sample)
 #  +--------------------------------+-------+-------+-------+-------------------------------------------
 #  |                           USER |       |   X   |   X   | www-data
 #  +--------------------------------+-------+-------+-------+-------------------------------------------
