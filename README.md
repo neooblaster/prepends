@@ -66,14 +66,17 @@ De nouveau dans l'éditeur nano, faites ``CTRL + W`` et tapez `include_path`.
 
 * Si la ligne commence par un **point-virgule** (`;`), supprimez-le (ligne commentée).
 * Pour séparer plusieurs valeur, utilisez les **deux-points** (`:`).
-* Inscrivez l'emplacement du dossier dans lequel se trouve le script ``auto_prepend_files.php``, dans notre cas : `/var/www/Prepends`.
+* Inscrivez l'emplacement du dossier dans lequel se trouve le script ``auto_prepend_files.php``, dans notre cas : `/var/www/prepends`.
 
 Vous devriez avoir quelque chose comme ceci :
 
 ```
 ; UNIX : "/path1:/path2
-include_path = ".:/usr/share/php:/var/www/Prepends"
+include_path = ".:/usr/share/php:/var/www/prepends"
 ```
+
+Répétez l'opération de configuration pour le **SAPI** ``CLI`` dont le fichier se trouve dans l'emplacement suivant :
+``/etc/php5/cli/php.ini``
 
 La configuration étant désormais terminée, il ne reste plus qu'à redémarrer le service **PHP** pour qu'elle soit effective :
 
@@ -81,7 +84,9 @@ La configuration étant désormais terminée, il ne reste plus qu'à redémarrer
 sudo service php5-fpm restart
 ```
 
-**Important** : La configuration sera effective uniquement pour le **SAPI** ``fpm-fcgi``. Si vous souhaitez utilisez les mêmes ressources **prepended** en ``CLI``, il faudra effectuer les mêmes opérations dans le fichier ``php.ini`` dédié à l'emplacement suivant : ``/etc/php5/cli/``.
+**Important** : Dans l'environnement de développement **[MCOSDE](https://gitlab-gre.viseo.net/MCOScheduler/MCOSDE)**, le dossier ``/var/www/prepends`` est un lien
+symbolique pointant vers ``/home/mco/prepends``. Si vous avez une configuration différente, il faudra faire les
+ajustements.
 
 
 ## 2. Configuration de ``auto_prepend_files.php`` :
