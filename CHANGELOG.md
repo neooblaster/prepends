@@ -1,3 +1,8 @@
+## 1.2.1 (2017-10-02)
+
+- [FIXED] Mise à jour du fichier de configuration `.ignore` pour ignorer tous les fichiers **Markdown**.
+
+
 ## 1.2.0 (2017-10-02)
 
 - [FIXED] Correction du setup `setup.const.document_root.php` generant une erreur `E_NOTICE` pour `CLI`.
