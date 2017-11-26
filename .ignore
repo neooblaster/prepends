@@ -18,6 +18,14 @@ FOLDERS {
 }
 
 
+# Ne pas définir les constantes __ROOT__ et __RURI__ pour CLI
+SHELL ~sh {
+    FILES {
+        setup.const.document_root.php
+    }
+}
+
+
 # BREAK_SIGNAL --- If remove, all text below will be read unnecessarily.
 # ----------------------------------------------------------------------------------------------- #
 # ----------------------------------------------------------------------------------------------- #

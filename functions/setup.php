@@ -75,7 +75,12 @@ function setup (
                     /** Compter le nombre d'occurence de ../ */
                     $dbdotslashes_occ = substr_count($dbdotslashes[0][0], "../");
 
-                    $rel_path = $root . $_SERVER['REQUEST_URI'];
+                    $rel_path = $root . @(($_SERVER['REQUEST_URI']) ?: '');
+
+                    /** Vérifier l'existance de l'emplacement correspondant au REQUEST_URI */
+                    if (!file_exists($rel_path) || !is_dir($rel_path)) {
+                        $rel_path = $root;
+                    }
 
                     for ($i = 0; $i <= $dbdotslashes_occ; $i++) {
                         $rel_path = substr($rel_path, 0, strrpos($rel_path,"/"));
@@ -86,7 +91,11 @@ function setup (
 
                 /** Autres cas */
                 else {
-                    $full_path = $root . $_SERVER["REQUEST_URI"] . '/' .$path;
+                    $full_path = $root . @(($_SERVER['REQUEST_URI']) ?: '') . '/' .$path;
+
+                    if (!file_exists($full_path) || !is_dir($full_path)) {
+                        $full_path = $root . '/' .$path;
+                    }
                 }
 
                 /** Supprimer les éventuels ./ et ../ */
