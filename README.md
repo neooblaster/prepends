@@ -1,5 +1,27 @@
 # PHP Prepended files
 
+## Sommaire
+
+[](BeginSummary)
+* [Sommaire](#sommaire)
+* [1. Présentation](#1-pr%c3%a9sentation)
+* [2. Configuration du fichier ``php.ini``](#2-configuration-du-fichier-phpini)
+* [3. Configuration de ``auto_prepend_files.php`` :](#3-configuration-de-auto_prepend_filesphp-)
+    * [3.1. Les commentaires :](#31-les-commentaires-)
+        * [3.1.1. Les commentaires en ligne](#311-les-commentaires-en-ligne)
+        * [3.1.2. Les commentaires multi-ligne](#312-les-commentaires-multi-ligne)
+    * [3.2. Les entités :](#32-les-entit%c3%a9s-)
+    * [3.3. Les blocks d'instructions :](#33-les-blocks-dinstructions-)
+    * [3.4. Les conditions](#34-les-conditions)
+    * [3.5. Expressions Réguliéres](#35-expressions-r%c3%a9guli%c3%a9res)
+* [Annexe 1 - Server keys](#annexe-1---server-keys)
+
+[](EndSummary)
+
+
+
+## 1. Présentation
+
 Dans **PHP**, il est possible d'automatiser l'intégration systématique de fichiers avant l'exécution et après l'exécution d'un script PHP. Ce sont respectivement les deux directives internes **auto_prepend_file** et **auto_append_file** qui permettent cette automatisation.
 
 > Ces deux directives sont disponibles quelle que soit la version de PHP.
@@ -15,7 +37,7 @@ Il a l'avantage également d'être configurable pour ajuster au mieux le comport
 Un exemple d'utilisation de l'`auto_prepend_file` est l'intégration de fonctions globales basiques propriétaires qui pourront être utilisées dans n'importe quel script PHP sans devoir à chaque fois faire l'inclusion manuellement.
 
 
-## 1. Configuration du fichier ``php.ini``
+## 2. Configuration du fichier ``php.ini``
 
 > La configuration suivante est déjà effective dans la machine virtuelle **MCOSDE**.
 
@@ -89,15 +111,15 @@ symbolique pointant vers ``/home/mco/prepends``. Si vous avez une configuration 
 ajustements.
 
 
-## 2. Configuration de ``auto_prepend_files.php`` :
+## 3. Configuration de ``auto_prepend_files.php`` :
 
 Automatiser l'inclusion de nombreux fichiers présent dans des dossiers et sous-dossiers peut être nuisible lorsque plusieurs sites virtuels cohabitent sur le même serveur. Il fallait donc un système pour ajuster le comportement du script afin de lui préciser des règles d'exclusion d'intégration. Ce fichier de configuration est le fichier ``.ignore`` qui doit se trouver dans le même emplacement que le script `auto_prepend_files.php`.
 
 Le principe de fonctionnement du fichier est très similaire aux fichiers de configurations de **NGINX**.
 
-### 2.1. Les commentaires :
+### 3.1. Les commentaires :
 
-#### 2.1.1. Les commentaires en ligne
+#### 3.1.1. Les commentaires en ligne
 
 J'ai choisi d'intégrer les trois modèles de commentaire en ligne les plus courants :
 
@@ -105,7 +127,7 @@ J'ai choisi d'intégrer les trois modèles de commentaire en ligne les plus cour
 * ``;`` **Point-virgule** : Utilisé dans les fichiers de configuration **PHP**.
 * ``//`` **Double slash** : Utilisé dans les scripts **PHP**, **JavaScript**.
 
-#### 2.1.2. Les commentaires multi-ligne
+#### 3.1.2. Les commentaires multi-ligne
 
 Bien qu'il soit possible de précéder chaque ligne du caractère de commentaire ***inline***, pour les gros pavés de texte, le commentaire multi-ligne reste plus approprié. Là encore j'ai utilisé le modèle le plus courant qui est le suivant.
 
@@ -125,7 +147,7 @@ BLOCK
 ```
 
 
-### 2.2. Les entités :
+### 3.2. Les entités :
 
 Dans les univers **Unix** et **Linux**, tout est fichier, même les dossiers.
 Fonctionnellement parlant, en revanche on distingue les deux entités :
@@ -140,7 +162,7 @@ L'entité ``FOLDERS`` sert à indiquer les dossiers à exclure.
 Exclure un dossier comprend donc l'ensemble des fichiers et sous-dossier qu'il contient.
 
 
-### 2.3. Les blocks d'instructions :
+### 3.3. Les blocks d'instructions :
 
 Tout comme **NGINX**, les instructions de configuration sont placées dans une structure constituant un **bloc**.
 Un bloc se présente sous la forme suivante :
@@ -158,7 +180,7 @@ condition_src condition_value {
 Pour créer une règle d'exclusion, il faut créer un bloc muni d'une condition de réalisation puis de lister les valeurs à exclure pour la ou les entités désirées : ``FILES`` et/ou ``FOLDER``.
 
 
-### 2.4. Les conditions
+### 3.4. Les conditions
 
 Le système de condition porte sur les données disponibles dans la variable super-globale ``$_SERVER`` disponible sous **Apache** (SAPI **apache**), **NGINX** (SAPI **FPM-FastCGI**) et en ligne de commande (SAPI **CLI**).
 
@@ -167,7 +189,7 @@ Le système de condition porte sur les données disponibles dans la variable sup
 Dans la formule suivante : ``condition_src condition_value``, ``condition_src`` prendra la valeur d'une clé existante dans la variable super-globale ``$_SERVER``, tandis que ``condition_value`` sera la valeur à remplir pour traiter l'ensemble des instructions enfants à ce bloc d'instruction.
 
 
-### 2.5. Expressions Réguliéres
+### 3.5. Expressions Réguliéres
 
 L'ensemble des valeurs saisies, qu'il s'agisse d'une valeur de condition, d'un nom de fichier ou dossier à exclure, celles-ci sont traitées en tant que valeur exacte.
 Il est possible de rendre ces valeurs plus souples en utilisant les expressions régulières. Pour transformer une valeur exacte en expression régulière, il suffit de la précéder à l'aide du caractère **tilde** ``~``.
