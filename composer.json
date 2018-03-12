@@ -1,0 +1,17 @@
+{
+    "name": "neooblaster/prepends",
+    "description": "Xpender is a script to enhance and simplify PHP auto-inclusion files with 'auto_append_file' and 'auto_prepend_file' configuration without edit php.ini after the first configuration.",
+    "type": "library",
+    "keywords": ["PHP", "prepend", "append", "echos", "array_rmap", "fix_FILES", "json_to", "pprint", "pprints", "setup"],
+    "licence": "GLP-3.0",
+    "authors": [
+        {
+            "name": "Nicolas DUPRE",
+            "email": "neo-blaster@hotmail.fr",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.6"
+    }
+}
