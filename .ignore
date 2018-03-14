@@ -9,6 +9,7 @@
 # 1. Global Files Exclusion - For All PHP Scripts
 FILES {
     ~.md$
+    ~.json$
 	LICENSE
 }
 
