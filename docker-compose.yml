@@ -1,0 +1,46 @@
+#-----------------------------------------------------------------------------
+#                          preprends - Docker Compose File
+#-----------------------------------------------------------------------------
+#
+#   File    : docker-compose.yml
+#
+#   Author  : Nicolas DUPRE
+#   Version : 0.2.1
+#   Started : 10.02.2018
+#   Release : 22.05.2018
+#   Status  : release
+#
+#   Description :
+#     Fichier de creation de l'environnement de developpement.
+#     Cela évite toute configuration manuelle.
+#
+#
+# Utilisation de la version docker-compose v3.2 pour le moteur 17.04.0+
+# OK : 3.4, Max : 3.6
+version: "3.4"
+
+# Déclaration d'un réseau virtuel.
+networks:
+  OrG:
+
+# Déclarations des serives
+services:
+  # Container principale
+  prepends:
+    container_name: "prepends"
+    image: "prepends"
+    hostname: "Prepends"
+    networks:
+      - OrG
+    restart: unless-stopped
+    build:
+      context: ./docker/core
+      dockerfile: "Dockerfile"
+    ports:
+      - 80:80
+      - 443:443
+      - 3306:3306
+
+    # Important : Si modification, mettre à jour "docker/core/config/entrypoint.sh"
+    volumes:
+      - "./:/var/www/prepends/"
