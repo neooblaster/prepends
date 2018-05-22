@@ -18,7 +18,7 @@
  *
  * @author    Nicolas DUPRE
  * @release   19/09/2017
- * @version   1.0.0
+ * @version   1.3.2
  * @package   Index
  */
 
@@ -275,8 +275,10 @@ if(file_exists(__DIR__ . "/.ignore")){
 
                 /** Gestion de niveau s'il ne s'agisssait pas d'un block FOLDERS ou FILES */
                 if(!$_PREPEND["in_files_block"] && !$_PREPEND["in_folders_block"]){
-                    $_PREPEND["accept_level"] = false;
+                    $_PREPEND["accept_level"] = [true];
+
                     $_PREPEND["current_level"]--;
+                    if ($_PREPEND["current_level"] < 0) $_PREPEND["current_level"] = 0;
                 }
 
                 /** Si nous étions dans un block FILES ou FOLDERS, il est cloturé, on n'enregistre plus */

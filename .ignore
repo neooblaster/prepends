@@ -8,22 +8,31 @@
 # ----------------------------------------------------------------------------------------------- #
 # 1. Global Files Exclusion - For All PHP Scripts
 FILES {
-    ~.md$
-    ~.json$
-	LICENSE
+
 }
 
 # 2. Global Folder Exclusion - For All PHP Scripts
 FOLDERS {
-    tests
+
 }
 
 
-# Ne pas définir les constantes __ROOT__ et __RURI__ pour CLI
-SHELL ~sh {
-    FILES {
-        setup.const.document_root.php
-    }
+
+# ----------------------------------------------------------------------------------------------- #
+# ------------------------------   EXCLUDES ALL DEVELOPMENT RESOURCES   ------------------------- #
+# ----------------------------------------------------------------------------------------------- #
+FILES {
+    ~.md$
+    ~.json$
+    ~.yml$
+    ~.sh$
+	LICENSE
+	Makefile
+}
+
+FOLDER {
+    docker
+    tests
 }
 
 
