@@ -30,7 +30,7 @@ FILES {
 	Makefile
 }
 
-FOLDER {
+FOLDERS {
     docker
     tests
 }

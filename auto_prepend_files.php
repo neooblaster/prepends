@@ -17,8 +17,8 @@
  *  * 2.4. Effacer toutes les traces (variables & fichier temporaire)
  *
  * @author    Nicolas DUPRE
- * @release   19/09/2017
- * @version   1.3.2
+ * @release   18.06.2018
+ * @version   1.3.3
  * @package   Index
  */
 
@@ -259,6 +259,7 @@ if(file_exists(__DIR__ . "/.ignore")){
                     }
                     /** Sinon, ignorer le block */
                     else {
+                        apf_stdout("--> NOT CORRESPONDING; IGNORE BLOCK" . PHP_EOL);
                         $_PREPEND["accept_level"][$_PREPEND["current_level"]] = false;
                     }
 
@@ -290,30 +291,34 @@ if(file_exists(__DIR__ . "/.ignore")){
 
             /** Traitement du buffer */
             if(!$_PREPEND["skip_buffer"]){
-                apf_stdout("--> TEXT LINE, PROCESS;" . PHP_EOL);
+                if ($_PREPEND["accept_level"][$_PREPEND["current_level"]]) {
+                    apf_stdout("--> TEXT LINE, PROCESS;" . PHP_EOL);
 
-                preg_match("#^\s*(.*)\s*$#i", $_PREPEND["buffer"], $_PREPEND["matches"]);
+                    preg_match("#^\s*(.*)\s*$#i", $_PREPEND["buffer"], $_PREPEND["matches"]);
 
-                /** Permet d'ignorer les lignes vide entre deux valeurs au sein du même block */
-                if(count($_PREPEND["matches"] >= 2)){
-                    apf_stdout("--> CHECK FOR EXCLUSION;" . PHP_EOL);
+                    /** Permet d'ignorer les lignes vide entre deux valeurs au sein du même block */
+                    if(count($_PREPEND["matches"] >= 2)){
+                        apf_stdout("--> CHECK FOR EXCLUSION;" . PHP_EOL);
 
-                    $regexp_store = "";
+                        $regexp_store = "";
 
-                    if(preg_match("#^~#", $_PREPEND["matches"][1])){
-                        $regexp_store = "_regexp";
-                        $_PREPEND["matches"][1] = preg_replace("#^~#", "", $_PREPEND["matches"][1]);
+                        if(preg_match("#^~#", $_PREPEND["matches"][1])){
+                            $regexp_store = "_regexp";
+                            $_PREPEND["matches"][1] = preg_replace("#^~#", "", $_PREPEND["matches"][1]);
+                        }
+
+                        if($_PREPEND["in_files_block"]){
+                            apf_stdout("--> LINE ADD TO FILES EXCLUSION;" . PHP_EOL);
+                            $_PREPEND["ignore"]["files$regexp_store"][] = $_PREPEND["matches"][1];
+                        } else if($_PREPEND["in_folders_block"]) {
+                            apf_stdout("--> LINE ADD TO FOLDERS EXCLUSION;" . PHP_EOL);
+                            $_PREPEND["ignore"]["folders$regexp_store"][] = $_PREPEND["matches"][1];
+                        } else {
+                            apf_stdout("--> LINE SKIPPED;" . PHP_EOL);
+                        }
                     }
-
-                    if($_PREPEND["in_files_block"]){
-                        apf_stdout("--> LINE ADD TO FILES EXCLUSION;" . PHP_EOL);
-                        $_PREPEND["ignore"]["files$regexp_store"][] = $_PREPEND["matches"][1];
-                    } else if($_PREPEND["in_folders_block"]) {
-                        apf_stdout("--> LINE ADD TO FOLDERS EXCLUSION;" . PHP_EOL);
-                        $_PREPEND["ignore"]["folders$regexp_store"][] = $_PREPEND["matches"][1];
-                    } else {
-                        apf_stdout("--> LINE SKIPPED;" . PHP_EOL);
-                    }
+                } else {
+                    apf_stdout("--> CURRENT LEVEL NOT ALLOWED. IGNORE BUFFER");
                 }
             }
 
@@ -324,6 +329,9 @@ if(file_exists(__DIR__ . "/.ignore")){
 
     fclose($_PREPEND["ignore_file_light"]);
 }
+
+apf_stdout("RECEIVED SERVER DATA : " . PHP_EOL);
+apf_stdout(print_r($_SERVER, true));
 
 apf_stdout("IGNORE RULES RESULT : " . PHP_EOL);
 apf_stdout(print_r($_PREPEND["ignore"], true));
