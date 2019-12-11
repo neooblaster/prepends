@@ -17,8 +17,8 @@
  *  * 2.4. Effacer toutes les traces (variables & fichier temporaire)
  *
  * @author    Nicolas DUPRE
- * @release   18.06.2018
- * @version   1.3.3
+ * @release   11.12.2019
+ * @version   1.3.4
  * @package   Index
  */
 
@@ -76,16 +76,18 @@ function apf_read_folder($full_path){
     foreach ($folders as $fkey => $fvalue){
         /** Si l'entrée ne commence pas par un point */
         if(!preg_match("#^\.#", $fvalue)){
-            apf_stdout("--> CHECKING FILE $fvalue" . PHP_EOL);
 
             /** S'il s'agit d'un dossier */
             if(is_dir("$full_path/$fvalue")){
+                apf_stdout("--> CHECKING DIR $fvalue" . PHP_EOL);
+
                 /** S'il n'est pas explicitement exclus */
                 if(!in_array($fvalue, $_PREPEND["ignore"]["folders"])){
                     $allowed = true;
 
                     /** S'il n'est pas exclus par RegExp */
                     foreach ($_PREPEND["ignore"]["folders_regexp"] as $exclude_pattern){
+                        apf_stdout("--> TESTING REGEXP '$exclude_pattern'" . PHP_EOL);
                         if(preg_match("#$exclude_pattern#", $fvalue)){
                             $allowed = false;
                             break;
@@ -98,6 +100,8 @@ function apf_read_folder($full_path){
             }
             /** S'il s'agit d'un fichier */
             else {
+                apf_stdout("--> CHECKING FILE $fvalue" . PHP_EOL);
+
                 /** S'il n'est pas explicitement exclus */
                 if(!in_array($fvalue, $_PREPEND["ignore"]["files"])){
                     $allowed = true;
@@ -105,6 +109,7 @@ function apf_read_folder($full_path){
                     /** S'il n'est pas exclus par RegExp */
                     foreach ($_PREPEND["ignore"]["files_regexp"] as $exclude_pattern){
                         if(preg_match("#$exclude_pattern#", $fvalue)){
+                            apf_stdout("--> TESTING REGEXP '$exclude_pattern'" . PHP_EOL);
                             $allowed = false;
                             break;
                         }
@@ -114,6 +119,7 @@ function apf_read_folder($full_path){
                 }
             }
         }
+        apf_stdout(PHP_EOL);
     }
 }
 
@@ -222,7 +228,7 @@ if(file_exists(__DIR__ . "/.ignore")){
             }
 
             /** Vérifier s'il s'agit d'une règle d'exclusion (instruction) */
-            if(preg_match("#^\s*([a-zA-Z_]+)\s+([a-zA-Z0-9-_.\s\/\(\);,=:\*^$?~]+)\s+\{#", $_PREPEND["buffer"], $_PREPEND["matches"])){
+            if(preg_match("#^\s*([a-zA-Z_]+)\s+([a-zA-Z0-9-_.\s\/\(\);,=:\*^$?!~]+)\s+\{#", $_PREPEND["buffer"], $_PREPEND["matches"])){
                 apf_stdout("--> INSTRUCTION FOUND;" . PHP_EOL);
 
                 /** On entre dans un niveau/sous/niveau */
@@ -344,9 +350,14 @@ apf_stdout(print_r($GLOBALS["_PREPEND"], true));
 apf_read_folder(__DIR__);
 
 
+// On debug, stop the process
+if(@$_PREPEND["debug"]) exit;
+
+
 // Cleansing
 @unlink(__DIR__ . "/.ignore_tmp");
 unset($GLOBALS["_PREPEND"]);
 unset($GLOBALS["regexp_store"]);
 
-//print_r($GLOBALS);
+
+if(@$_PREPEND["debug"]) print_r($GLOBALS);
