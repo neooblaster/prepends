@@ -109,86 +109,63 @@ if (!function_exists("apf_read_folder")) {
 
                 /** S'il s'agit d'un dossier */
                 if(is_dir("$full_path/$fvalue")){
-                    $allowed = false;
-
-                    // Check if folder is included
-                    // -- Check as it
-                    if (in_array($fvalue, $_PREPEND["include"]["folders"])) {
-                        $allowed = true;
-                    }
-                    // -- Check as RegExp
-                    else {
-                        foreach ($_PREPEND["include"]["folders_regexp"] as $include_pattern) {
-                            if (preg_match("#$include_pattern#", $fvalue)) {
-                                $allowed = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    // Check if folder is excluded
-                    // -- If no include rule found, check if excluded
-                    if (!$allowed) {
-                        // -- If not excluded as it, consider folder as allowed
-                        //    until regexp can excluded it
-                        if (!in_array($fvalue, $_PREPEND['exclude']['folders'])) {
-                            $allowed = true;
-
-                            // -- Check regexp
-                            foreach ($_PREPEND['exclude']['folders_regexp'] as $exclude_pattern) {
-                                if (preg_match("#$exclude_pattern#", $fvalue)) {
-                                    $allowed = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
                     // If allowed, read recursively
-                    if ($allowed) apf_read_folder("$full_path/$fvalue");
+                    if (apf_check_allowed($fvalue, "folders")) apf_read_folder("$full_path/$fvalue");
                 }
                 /** S'il s'agit d'un fichier */
                 else {
-                    $allowed = false;
-
-                    // Check if file is included
-                    // -- Check as it
-                    if (in_array($fvalue, $_PREPEND["include"]["files"])) {
-                        $allowed = true;
-                    }
-                    // -- Check as RegExp
-                    else {
-                        foreach ($_PREPEND["include"]["files_regexp"] as $include_pattern) {
-                            if (preg_match("#$include_pattern#", $fvalue)) {
-                                $allowed = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    // Check if files is excluded
-                    // -- If no include rule found, check if excluded
-                    if (!$allowed) {
-                        // -- If not excluded as it, consider files as allowed
-                        //    until regexp can excluded it
-                        if (!in_array($fvalue, $_PREPEND['exclude']['files'])) {
-                            $allowed = true;
-
-                            // -- Check regexp
-                            foreach ($_PREPEND['exclude']['files_regexp'] as $exclude_pattern) {
-                                if (preg_match("#$exclude_pattern#", $fvalue)) {
-                                    $allowed = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    // If allowed, read recursively
-                    if ($allowed) require "$full_path/$fvalue";
+                    // If allowed, include file
+                    if (apf_check_allowed($fvalue, "files")) require "$full_path/$fvalue";
                 }
             }
         }
+    }
+}
+
+/**
+ * Check if entity is allowed (file or folder)
+ */
+if (!function_exists("apf_check_allowed")) {
+    function apf_check_allowed ($file, $type)
+    {
+        global $_PREPEND;
+        $allowed = false;
+
+        // Check if file/folder is included
+        // -- Check as it
+        if (in_array($file, $_PREPEND["include"][$type])) {
+            $allowed = true;
+        }
+        // -- Check as RegExp
+        else {
+            foreach ($_PREPEND["include"]["${type}_regexp"] as $include_pattern) {
+                if (preg_match("#$include_pattern#", $file)) {
+                    $allowed = true;
+                    break;
+                }
+            }
+        }
+
+        // Check if file/folder is excluded
+        // -- If no include rule found, check if excluded
+        if (!$allowed) {
+            // -- If not excluded as it, consider folder as allowed
+            //    until regexp can excluded it
+            if (!in_array($file, $_PREPEND['exclude'][$type])) {
+                $allowed = true;
+
+                // -- Check regexp
+                foreach ($_PREPEND['exclude']["${type}_regexp"] as $exclude_pattern) {
+                    if (preg_match("#$exclude_pattern#", $file)) {
+                        $allowed = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If allowed, read recursively
+        return $allowed;
     }
 }
 

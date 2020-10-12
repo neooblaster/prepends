@@ -3,4 +3,3 @@
 .cache/*
 !.cache/.required
 classes/
-tests/
