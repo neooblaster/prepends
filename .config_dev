@@ -1,0 +1,276 @@
+# ----------------------------------------------------------------------------------------------- #
+# -----------------------------------------   CURRENT DEV    ------------------------------------ #
+# ----------------------------------------------------------------------------------------------- #
+FILES {
+   ~.md$
+   ~.json$
+   ~.yml$
+   ~.sh$
+   LICENSE
+   Makefile
+}
+#   Folders:
+FOLDERS {
+   docker
+   tests
+}
+
+
+
+# ----------------------------------------------------------------------------------------------- #
+# -------------------------------------------  TEST CASE   -------------------------------------- #
+# ----------------------------------------------------------------------------------------------- #
+# BREAK_SIGNAL --- If remove, all text below will be read unnecessarily.
+#
+# Dev Test : P = xPEND; X = xclude; F = FILE/FOLDER
+PREPEND {
+    INCLUDE {
+        FILES {
+            file_to_include_in_prepend_PXF
+        }
+        FOLDERS {
+            folder_to_include_in_prepend_PXF
+        }
+    }
+    EXCLUDE {
+        FILES {
+            file_to_exclude_in_prepend_PXF
+        }
+        FOLDERS {
+            folder_to_exclude_in_prepend_PXF
+        }
+    }
+}
+
+APPEND {
+    INCLUDE {
+        FILES {
+            file_to_include_in_append_PXF
+        }
+        FOLDERS {
+            folder_to_include_in_append_PXF
+        }
+    }
+    EXCLUDE {
+        FILES {
+            file_to_exclude_in_append_PXF
+        }
+        FOLDERS {
+            folder_to_exclude_in_append_PXF
+        }
+    }
+}
+
+
+
+APPEND {
+    FILES {
+        INCLUDE {
+            file_to_include_in_append_PFX
+        }
+        EXCLUDE {
+            file_to_exclude_in_append_PFX
+        }
+    }
+    FOLDERS {
+        INCLUDE {
+            folder_to_include_in_append_PFX
+        }
+        EXCLUDE {
+            folder_to_exclude_in_append_PFX
+        }
+    }
+}
+
+PREPEND {
+    FILES {
+        INCLUDE {
+            file_to_include_in_prepend_PFX
+        }
+        EXCLUDE {
+            file_to_exclude_in_prepend_PFX
+        }
+    }
+    FOLDERS {
+        INCLUDE {
+            folder_to_include_in_prepend_PFX
+        }
+        EXCLUDE {
+            folder_to_exclude_in_prepend_PFX
+        }
+    }
+}
+
+FILES {
+    PREPEND {
+        INCLUDE {
+            file_to_include_in_prepend_FPX
+        }
+        EXCLUDE {
+            file_to_exclude_in_prepend_FPX
+        }
+    }
+    APPEND {
+        INCLUDE {
+            file_to_include_in_append_FPX
+        }
+        EXCLUDE {
+            file_to_exclude_in_append_FPX
+        }
+    }
+}
+
+FOLDERS {
+    PREPEND {
+        INCLUDE {
+            folder_to_include_in_prepend_FPX
+        }
+        EXCLUDE {
+            folder_to_exclude_in_prepend_FPX
+        }
+    }
+    APPEND {
+        INCLUDE {
+            folder_to_include_in_append_FPX
+        }
+        EXCLUDE {
+            folder_to_exclude_in_append_FPX
+        }
+    }
+}
+
+
+FILES {
+    INCLUDE {
+        PREPEND {
+            file_to_include_in_prepend_FXP
+        }
+        APPEND {
+            file_to_include_in_append_FXP
+        }
+    }
+    EXCLUDE {
+        PREPEND {
+            file_to_exclude_in_prepend_FXP
+        }
+        APPEND {
+            file_to_exclude_in_append_FXP
+        }
+    }
+}
+
+FOLDERS {
+    INCLUDE {
+        PREPEND {
+            folder_to_include_in_prepend_FXP
+        }
+        APPEND {
+            folder_to_include_in_append_FXP
+        }
+    }
+    EXCLUDE {
+        PREPEND {
+            folder_to_exclude_in_prepend_FXP
+        }
+        APPEND {
+            folder_to_exclude_in_append_FXP
+        }
+    }
+}
+INCLUDE {
+    FILES {
+        PREPEND {
+            file_to_include_in_prepend_XFP
+        }
+        APPEND {
+            file_to_include_in_append_XFP
+        }
+    }
+    FOLDERS {
+        PREPEND {
+            folder_to_include_in_prepend_XFP
+        }
+        APPEND {
+            folder_to_include_in_append_XFP
+        }
+    }
+}
+
+EXCLUDE {
+    FILES {
+        PREPEND {
+            file_to_exclude_in_prepend_XFP
+        }
+        APPEND {
+            file_to_exclude_in_append_XFP
+        }
+    }
+    FOLDERS {
+        PREPEND {
+            folder_to_exclude_in_prepend_XFP
+        }
+        APPEND {
+            folder_to_exclude_in_append_XFP
+        }
+    }
+}
+
+INCLUDE {
+    PREPEND {
+        FILES {
+            file_to_include_in_prepend_XPF
+        }
+        FOLDERS {
+            folder_to_include_in_prepend_XPF
+        }
+    }
+    APPEND {
+        FILES {
+            file_to_include_in_append_XPF
+        }
+        FOLDERS {
+            folder_to_include_in_append_XPF
+        }
+    }
+}
+
+EXCLUDE {
+    PREPEND {
+        FILES {
+            file_to_exclude_in_prepend_XPF
+        }
+        FOLDERS {
+            folder_to_exclude_in_prepend_XPF
+        }
+    }
+    APPEND {
+        FILES {
+            file_to_exclude_in_append_XPF
+        }
+        FOLDERS {
+            folder_to_exclude_in_append_XPF
+        }
+    }
+}
+
+
+
+# ----------------------------------------------------------------------------------------------- #
+# -------------------------------------------   BASE DEV   -------------------------------------- #
+# ----------------------------------------------------------------------------------------------- #
+# BREAK_SIGNAL --- If remove, all text below will be read unnecessarily.
+PREPEND {
+    INCLUDE {
+        FILES {
+            prepincl
+        }
+    }
+}
+
+APPEND {
+    INCLUDE {
+        FILES {
+            appincl
+        }
+    }
+}

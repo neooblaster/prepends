@@ -1,5 +1,6 @@
 .idea/
 .gitlab-ci.yml
-.tmp/*
+.cache/*
+!.cache/.required
 classes/
 tests/
