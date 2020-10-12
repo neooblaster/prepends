@@ -169,7 +169,25 @@ if (!function_exists("apf_check_allowed")) {
     }
 }
 
+/**
+ * Check if buffer is a block of specified type
+ */
+if (!function_exists("apf_check_block")) {
+    function apf_check_block ($buffer, $type)
+    {
+        global $_PREPEND;
+        $upperType = strtoupper($type);
+        $lowerType = strtolower($type);
 
+        if (preg_match("#^\s*${upperType}\s*\{#i", $buffer) && $_PREPEND["accept_level"][$_PREPEND["current_level"]]) {
+            if ($_PREPEND["in_${lowerType}_block"]) apf_stdout("${upperType} block already openned", true);
+            apf_stdout("--> BLOCK ${upperType} FOUND & LEVEL ALLOW;");
+            $_PREPEND["in_${lowerType}_block"] = true;
+            $_PREPEND["skip_buffer"] = true;
+            $_PREPEND["block_openning_order"][] = $upperType;
+        }
+    }
+}
 
 /**
  * Activation du niveau d'erreur à "afficher tout"
@@ -243,8 +261,8 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
     $_PREPEND["in_append_block"] = false;
     $_PREPEND["in_folders_block"] = false;
     $_PREPEND["in_files_block"] = false;
-    $_PREPEND["in_excl_block"] = false;
-    $_PREPEND["in_incl_block"] = false;
+    $_PREPEND["in_exclude_block"] = false;
+    $_PREPEND["in_include_block"] = false;
     $_PREPEND["block_openning_order"] = [];
 
     while($_PREPEND["buffer"] = fgets($_PREPEND["ignore_file_light"])){
@@ -257,62 +275,24 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
         /** Si la ligne n'est pas vide */
         if(!preg_match("#^\s*$#", $_PREPEND["buffer"])){
             apf_stdout("BUFFER :: #$_PREPEND[buffer]#");
-
-            // @TODO : refacto contrôle avec fonction
             
             /** Vérifier s'il s'agit d'un groupe FILES */
-            if(preg_match("#^\s*FILES\s*\{#i", $_PREPEND["buffer"]) && $_PREPEND["accept_level"][$_PREPEND["current_level"]]){
-                if($_PREPEND["in_files_block"]) apf_stdout("FILES block already opennend", true);
-                apf_stdout("--> BLOCK FILE FOUND & LEVEL ALLOW;");
-                $_PREPEND["in_files_block"] = true;
-                $_PREPEND["skip_buffer"] = true;
-                $_PREPEND["block_openning_order"][] = "FILES";
-            }
+            apf_check_block($_PREPEND["buffer"], 'FILES');
 
             /** Vérifier s'il s'agit d'un groupe FOLDER et que celui-ci est approuvé dans son niveau d'imbrication */
-            if(preg_match("#^\s*FOLDERS\s*\{#i", $_PREPEND["buffer"]) && $_PREPEND["accept_level"][$_PREPEND["current_level"]]){
-                if($_PREPEND["in_folders_block"]) apf_stdout("FOLDERS block already opennend", true);
-                apf_stdout("--> BLOCK FOLDER FOUND & LEVEL ALLOW;");
-                $_PREPEND["in_folders_block"] = true;
-                $_PREPEND["skip_buffer"] = true;
-                $_PREPEND["block_openning_order"][] = "FOLDERS";
-            }
+            apf_check_block($_PREPEND["buffer"], 'FOLDERS');
 
             /** Vérifier s'il s'agit d'un groupe PREPEND **/
-            if (preg_match("#^\s*PREPEND\s*\{#i", $_PREPEND["buffer"]) && $_PREPEND["accept_level"][$_PREPEND["current_level"]]) {
-                if($_PREPEND["in_prepend_block"]) apf_stdout("FILES block already opennend", true);
-                apf_stdout("--> BLOCK PREPEND FOUND & LEVEL ALLOW;");
-                $_PREPEND["in_prepend_block"] = true;
-                $_PREPEND["skip_buffer"] = true;
-                $_PREPEND["block_openning_order"][] = "PREPEND";
-            }
+            apf_check_block($_PREPEND["buffer"], 'PREPEND');
 
             /** Vérifier s'il s'agit d'un groupe APPEND **/
-            if (preg_match("#^\s*APPEND\s*\{#i", $_PREPEND["buffer"]) && $_PREPEND["accept_level"][$_PREPEND["current_level"]]) {
-                if($_PREPEND["in_append_block"]) apf_stdout("APPEND block already opennend", true);
-                apf_stdout("--> BLOCK APPEND FOUND & LEVEL ALLOW;");
-                $_PREPEND["in_append_block"] = true;
-                $_PREPEND["skip_buffer"] = true;
-                $_PREPEND["block_openning_order"][] = "APPEND";
-            }
+            apf_check_block($_PREPEND["buffer"], 'APPEND');
 
             /** Vérifier s'il s'agit d'un groupe INCLUDE **/
-            if (preg_match("#^\s*INCLUDE\s*\{#i", $_PREPEND["buffer"]) && $_PREPEND["accept_level"][$_PREPEND["current_level"]]) {
-                if($_PREPEND["in_incl_block"]) apf_stdout("INCLUDE block already opennend", true);
-                apf_stdout("--> BLOCK INCLUDE FOUND & LEVEL ALLOW;");
-                $_PREPEND["in_incl_block"] = true;
-                $_PREPEND["skip_buffer"] = true;
-                $_PREPEND["block_openning_order"][] = "INCLUDE";
-            }
+            apf_check_block($_PREPEND["buffer"], 'INCLUDE');
 
             /** Vérifier s'il s'agit d'un groupe EXCLUDE **/
-            if (preg_match("#^\s*EXCLUDE\s*\{#i", $_PREPEND["buffer"])) {
-                if($_PREPEND["in_excl_block"]) apf_stdout("EXCLUDE block already opennend", true);
-                apf_stdout("--> BLOCK EXCLUDE FOUND & LEVEL ALLOW;");
-                $_PREPEND["in_excl_block"] = true;
-                $_PREPEND["skip_buffer"] = true;
-                $_PREPEND["block_openning_order"][] = "EXCLUDE";
-            }
+            apf_check_block($_PREPEND["buffer"], 'EXCLUDE');
 
             /** Vérifier s'il s'agit d'une règle d'exclusion (instruction) */
             if(preg_match("#^\s*([a-zA-Z_]+)\s+([a-zA-Z0-9-_.\s\/\(\);,=:\*^$?!~]+)\s+\{#", $_PREPEND["buffer"], $_PREPEND["matches"])){
@@ -379,26 +359,13 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
                 /** Sinon adapté la logique en fonction du block fermé **/
                 else {
                     apf_stdout("--> CLOSE KEYWORD instruction : " . end($_PREPEND["block_openning_order"]));
-                    // @TODO : refacto pour dynamique
-                    switch (end($_PREPEND["block_openning_order"])) {
-                        case 'FILES':
-                            $_PREPEND["in_files_block"] = false;
-                            break;
-                        case 'FOLDERS':
-                            $_PREPEND["in_folders_block"] = false;
-                            break;
-                        case 'INCLUDE':
-                            $_PREPEND["in_incl_block"] = false;
-                            break;
-                        case 'EXCLUDE':
-                            $_PREPEND["in_excl_block"] = false;
-                            break;
-                        case 'APPEND':
-                            $_PREPEND["in_append_block"] = false;
-                            break;
-                        case 'PREPEND':
-                            $_PREPEND["in_prepend_block"] = false;
-                            break;
+                    if (
+                        in_array(
+                            end($_PREPEND["block_openning_order"]),
+                            ['FILES', 'FOLDERS', 'PREPEND', 'APPEND', 'INCLUDE', 'EXCLUDE']
+                        )
+                    ) {
+                        $_PREPEND["in_" . strtolower(end($_PREPEND["block_openning_order"])) . "_block"] = false;
                     }
                     array_pop($_PREPEND["block_openning_order"]);
                 }
@@ -436,7 +403,7 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
                             apf_stdout("--> Store rule :");
 
                             // If INCLUDE is specified, else EXLCUDE is default (or specified)
-                            if ($_PREPEND["in_incl_block"]) {
+                            if ($_PREPEND["in_include_block"]) {
                                 $_PREPEND["target"] = &$_PREPEND['include'];
                             } else {
                                 $_PREPEND["target"] = &$_PREPEND['exclude'];
