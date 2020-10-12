@@ -30,7 +30,7 @@ $_PREPEND = [
     /**
      * boolean Active le mode debuggage permettant l'affichage des sorties
      */
-    "debug" => true,
+    "debug" => false,
 
     /**
      * string  Indicates if "caller" is "prepend" or "append" interface
@@ -51,9 +51,9 @@ $_PREPEND = [
          */
         "files" => [
             // Self exclusion
-            "process.php",
-            "prepend.php",
-            "append.php"
+            "_xpend_files.php",
+            "_prepend.php",
+            "_append.php"
         ],
         "files_regexp" => []
     ],
@@ -109,38 +109,83 @@ if (!function_exists("apf_read_folder")) {
 
                 /** S'il s'agit d'un dossier */
                 if(is_dir("$full_path/$fvalue")){
-                    /** S'il n'est pas explicitement exclus */
-                    if(!in_array($fvalue, $_PREPEND["ignore"]["folders"])){
-                        $allowed = true;
+                    $allowed = false;
 
-                        /** S'il n'est pas exclus par RegExp */
-                        foreach ($_PREPEND["ignore"]["folders_regexp"] as $exclude_pattern){
-                            if(preg_match("#$exclude_pattern#", $fvalue)){
-                                $allowed = false;
+                    // Check if folder is included
+                    // -- Check as it
+                    if (in_array($fvalue, $_PREPEND["include"]["folders"])) {
+                        $allowed = true;
+                    }
+                    // -- Check as RegExp
+                    else {
+                        foreach ($_PREPEND["include"]["folders_regexp"] as $include_pattern) {
+                            if (preg_match("#$include_pattern#", $fvalue)) {
+                                $allowed = true;
                                 break;
                             }
-
                         }
-
-                        if($allowed) apf_read_folder("$full_path/$fvalue");
                     }
+
+                    // Check if folder is excluded
+                    // -- If no include rule found, check if excluded
+                    if (!$allowed) {
+                        // -- If not excluded as it, consider folder as allowed
+                        //    until regexp can excluded it
+                        if (!in_array($fvalue, $_PREPEND['exclude']['folders'])) {
+                            $allowed = true;
+
+                            // -- Check regexp
+                            foreach ($_PREPEND['exclude']['folders_regexp'] as $exclude_pattern) {
+                                if (preg_match("#$exclude_pattern#", $fvalue)) {
+                                    $allowed = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // If allowed, read recursively
+                    if ($allowed) apf_read_folder("$full_path/$fvalue");
                 }
                 /** S'il s'agit d'un fichier */
                 else {
-                    /** S'il n'est pas explicitement exclus */
-                    if(!in_array($fvalue, $_PREPEND["ignore"]["files"])){
-                        $allowed = true;
+                    $allowed = false;
 
-                        /** S'il n'est pas exclus par RegExp */
-                        foreach ($_PREPEND["ignore"]["files_regexp"] as $exclude_pattern){
-                            if(preg_match("#$exclude_pattern#", $fvalue)){
-                                $allowed = false;
+                    // Check if file is included
+                    // -- Check as it
+                    if (in_array($fvalue, $_PREPEND["include"]["files"])) {
+                        $allowed = true;
+                    }
+                    // -- Check as RegExp
+                    else {
+                        foreach ($_PREPEND["include"]["files_regexp"] as $include_pattern) {
+                            if (preg_match("#$include_pattern#", $fvalue)) {
+                                $allowed = true;
                                 break;
                             }
                         }
-
-                        if($allowed) require_once "$full_path/$fvalue";
                     }
+
+                    // Check if files is excluded
+                    // -- If no include rule found, check if excluded
+                    if (!$allowed) {
+                        // -- If not excluded as it, consider files as allowed
+                        //    until regexp can excluded it
+                        if (!in_array($fvalue, $_PREPEND['exclude']['files'])) {
+                            $allowed = true;
+
+                            // -- Check regexp
+                            foreach ($_PREPEND['exclude']['files_regexp'] as $exclude_pattern) {
+                                if (preg_match("#$exclude_pattern#", $fvalue)) {
+                                    $allowed = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // If allowed, read recursively
+                    if ($allowed) require "$full_path/$fvalue";
                 }
             }
         }
@@ -470,7 +515,7 @@ apf_stdout(print_r($GLOBALS["_PREPEND"], true));
 
 
 // Lecture du dossier courant
-//apf_read_folder(__DIR__); //@TODO reactiver
+apf_read_folder(__DIR__);
 
 
 // Cleansing
