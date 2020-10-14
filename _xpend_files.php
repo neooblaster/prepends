@@ -18,7 +18,7 @@
  *
  * @author    Nicolas DUPRE
  * @release   12.10.2020
- * @version   2.0.0
+ * @version   2.0.1
  * @package   Index
  */
 
@@ -29,6 +29,7 @@
 $_PREPEND = [
     /**
      * boolean Active le mode debuggage permettant l'affichage des sorties
+     * /!\ file .config_dev is used instead .config when debug is enabled /!\
      */
     "debug" => false,
 
@@ -229,8 +230,8 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
         /** Rechercher le BREAK_SIGNAL dans le fichier d'origine */
         while($_PREPEND["buffer"] = fgets($_PREPEND["ignore_file"])){
             if(preg_match("/#\s*BREAK_SIGNAL/", $_PREPEND["buffer"])){
-               fclose($_PREPEND["ignore_tmp_file"]);
-               break;
+                fclose($_PREPEND["ignore_tmp_file"]);
+                break;
             } else {
                 fputs($_PREPEND["ignore_tmp_file"], $_PREPEND["buffer"]);
             }
@@ -275,7 +276,7 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
         /** Si la ligne n'est pas vide */
         if(!preg_match("#^\s*$#", $_PREPEND["buffer"])){
             apf_stdout("BUFFER :: #$_PREPEND[buffer]#");
-            
+
             /** Vérifier s'il s'agit d'un groupe FILES */
             apf_check_block($_PREPEND["buffer"], 'FILES');
 
@@ -297,7 +298,6 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
             /** Vérifier s'il s'agit d'une règle d'exclusion (instruction) */
             if(preg_match("#^\s*([a-zA-Z_]+)\s+([a-zA-Z0-9-_.\s\/\(\);,=:\*^$?!~]+)\s+\{#", $_PREPEND["buffer"], $_PREPEND["matches"])){
                 apf_stdout("--> INSTRUCTION FOUND;");
-                $_PREPEND["block_openning_order"][] = 'INSTRUCTION';
 
                 /** On entre dans un niveau/sous/niveau */
                 apf_stdout("--> INCREASE LEVEL FROM $_PREPEND[current_level]");
@@ -307,6 +307,8 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
                 /** Translation de variable pour "simplifier" */
                 $_PREPEND["key"] = $_PREPEND["matches"][1];
                 $_PREPEND["value"] = $_PREPEND["matches"][2];
+
+                $_PREPEND["block_openning_order"][] = $_PREPEND["key"];
 
                 if(array_key_exists($_PREPEND["key"], $_SERVER)){
                     apf_stdout("--> KEY EXIST IN &amp;_SERVER;");
@@ -350,20 +352,21 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
 
                 /** Gestion de niveau s'il ne s'agisssait pas d'un block FOLDERS/FILES/INCLUDE/EXCLUDE/APPEND/PREPED */
                 if (!in_array(end($_PREPEND["block_openning_order"]), ['FILES', 'FOLDERS', 'INCLUDE', 'EXCLUDE', 'PREPEND', 'APPEND'])) {
-                    apf_stdout("--> CLOSE rule instruction;");
+                    apf_stdout("--> CLOSE rule " . end($_PREPEND["block_openning_order"]));
                     $_PREPEND["accept_level"] = [true];
 
                     $_PREPEND["current_level"]--;
                     if ($_PREPEND["current_level"] < 0) $_PREPEND["current_level"] = 0;
+                    array_pop($_PREPEND["block_openning_order"]);
                 }
                 /** Sinon adapté la logique en fonction du block fermé **/
                 else {
                     apf_stdout("--> CLOSE KEYWORD instruction : " . end($_PREPEND["block_openning_order"]));
                     if (
-                        in_array(
-                            end($_PREPEND["block_openning_order"]),
-                            ['FILES', 'FOLDERS', 'PREPEND', 'APPEND', 'INCLUDE', 'EXCLUDE']
-                        )
+                    in_array(
+                        end($_PREPEND["block_openning_order"]),
+                        ['FILES', 'FOLDERS', 'PREPEND', 'APPEND', 'INCLUDE', 'EXCLUDE']
+                    )
                     ) {
                         $_PREPEND["in_" . strtolower(end($_PREPEND["block_openning_order"])) . "_block"] = false;
                     }
@@ -391,9 +394,9 @@ if(file_exists(__DIR__ . "/" . $_PREPEND["config_file"])){
 
                         // Check for PREPEND or APPEND (or not set)
                         if (
-                              ($_PREPEND["in_append_block"] && $_PREPEND['caller'] === 'append')
-                           || ($_PREPEND["in_prepend_block"] && $_PREPEND['caller'] === 'prepend')
-                           || (!$_PREPEND["in_append_block"] && !$_PREPEND["in_prepend_block"])
+                            ($_PREPEND["in_append_block"] && $_PREPEND['caller'] === 'append')
+                            || ($_PREPEND["in_prepend_block"] && $_PREPEND['caller'] === 'prepend')
+                            || (!$_PREPEND["in_append_block"] && !$_PREPEND["in_prepend_block"])
                         ) {
                             $_PREPEND["store"] = true;
                         }

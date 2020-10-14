@@ -8,9 +8,19 @@
  *  * Si `constant` est retenue : La variable est ignorée
  *
  * @author    Nicolas DUPRE
- * @release   21/09/2017
- * @version   1.0.0
+ * @release   14.10.2020
+ * @version   1.1.0
  * @package   Prepend
+ *
+ *
+ * Version 1.1.0 - 14.10.2020 :
+ *    - Fix regular expression which delete comment block
+ *      In case where comment block closing tag has no space
+ *      between tag and text, that will break JSON. *
+ *
+ * Version 1.0.0 - 21.09.2017 :
+ *    - Initial Version
+ *
  */
 
 /**
@@ -38,7 +48,7 @@ function json_to (
     // Suppression des commentaires en ligne
     $json_string = preg_replace("#\/\/.*#", "", $json_string);
     // Suppression des commentaires en block
-    $json_string = preg_replace("#\/\*+(.*\s)*\*+\/#U", "", $json_string);
+    $json_string = preg_replace("#\/\*+(.*\s*)*\*+\/#U", "", $json_string);
     // Suppression des lignes vides
     $json_string = preg_replace("#^\s*\n#", "", $json_string);
 
